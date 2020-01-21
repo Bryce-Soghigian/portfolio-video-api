@@ -8,6 +8,10 @@ const PORT = process.env.PORT || 5555;
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname + "index.html"));
 });
+
+app.get("/awake",(req,res) =>{
+    res.status(200).json({message:"api is awake"})
+})
 //============CMT===============================//
 app.get("/cmt", function(req, res) {
     const path = "assets/cmt.mp4";
