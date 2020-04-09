@@ -18,6 +18,66 @@ res.status(200).json({message:"api is awake"})
 
 
 })
+app.get("/byname/:name",(req,res) => {
+  const {name} = req.params
+  const path = `assets/${name}.mp4`
+  const stat = fs.statSync(path);
+  const fileSize = stat.size;
+  const range = req.headers.range;
+  if (range) {
+    const parts = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+    const chunksize = end - start + 1;
+    const file = fs.createReadStream(path, { start, end });
+    const head = {
+      "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": chunksize,
+      "Content-Type": "video/mp4"
+    };
+    res.writeHead(206,head)
+    file.pipe(res)
+
+  }else{
+      const head = {
+        'Content-Length': fileSize,
+        'Content-Type': 'video/mp4',
+      }
+      res.writeHead(200,head)
+      fs.createReadStream(path).pipe(res)
+  }
+})
+//=================Planetary====================//
+app.get("/planetary", function(req, res) {
+  const path = "assets/planetary.mp4";
+  const stat = fs.statSync(path);
+  const fileSize = stat.size;
+  const range = req.headers.range;
+  if (range) {
+    const parts = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+    const chunksize = end - start + 1;
+    const file = fs.createReadStream(path, { start, end });
+    const head = {
+      "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": chunksize,
+      "Content-Type": "video/mp4"
+    };
+    res.writeHead(206,head)
+    file.pipe(res)
+
+  }else{
+      const head = {
+        'Content-Length': fileSize,
+        'Content-Type': 'video/mp4',
+      }
+      res.writeHead(200,head)
+      fs.createReadStream(path).pipe(res)
+  }
+});
 //============CMT===============================//
 app.get("/cmt", function(req, res) {
     const path = "assets/cmt.mp4";
@@ -50,7 +110,7 @@ app.get("/cmt", function(req, res) {
   });
 //============Crime Stats =========================//
 app.get("/Crime", function(req, res) {
-    const path = "assets/Crime.mp4";
+    const path = "assets/crime.mp4";
     const stat = fs.statSync(path);
     const fileSize = stat.size;
     const range = req.headers.range;
